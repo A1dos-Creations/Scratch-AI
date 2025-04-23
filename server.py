@@ -2,14 +2,15 @@ import os
 import google.generativeai as genai
 from flask import Flask, request, jsonify
 from flask_cors import CORS # Needed for requests from browser (TurboWarp)
+from dotenv import load_dotenv  # Import load_dotenv
 
-GEMINI_API_KEY = "AIzaSyCjenxfDt_m-V0gpMJEmtEugpgQdb264Ok"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 # --- End Configuration ---
 
-if not GEMINI_API_KEY or GEMINI_API_KEY == "YOUR_GEMINI_API_KEY":
+if not GEMINI_API_KEY:
     print("ERROR: Gemini API Key not set. Please set the GEMINI_API_KEY variable.")
 
-if GEMINI_API_KEY and GEMINI_API_KEY != "YOUR_GEMINI_API_KEY":
+if GEMINI_API_KEY:
      try:
         genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-pro')
@@ -33,7 +34,7 @@ def ask_gemini():
     if not prompt:
         return jsonify({"error": "Missing 'prompt' in request data"}), 400
 
-    if not GEMINI_API_KEY or GEMINI_API_KEY == "YOUR_GEMINI_API_KEY":
+    if not GEMINI_API_KEY:
          print("Warning: API Key not set. Returning simulated response.")
          simulated_response = f"Simulated answer to: {prompt}"
          return jsonify({"response": simulated_response})
